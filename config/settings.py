@@ -29,7 +29,11 @@ SECRET_KEY = 'django-insecure-b!m(q=16(a$o^_7rt#oa0@)ki22nu$v(8ow+43pv@@r#s8!@b8
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    'nova-portalinterno-production.up.railway.app',
+]
 
 
 # Application definition
