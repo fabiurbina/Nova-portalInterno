@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from .cpj import consultar_usuarios, consultar_concluidos,testar_gateway
+from django.http import JsonResponse
 
 
 def home(request):
