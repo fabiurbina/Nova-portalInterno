@@ -84,20 +84,30 @@ DATABASES = {
     },
 
     'cpj': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('CPJ_DATABASE'),
-        'USER': os.getenv('CPJ_USUARIO'),
-        'PASSWORD': os.getenv('CPJ_SENHA'),
-        'HOST': os.getenv('CPJ_HOST'),
-        'PORT': os.getenv('CPJ_PORTA'),
-        'OPTIONS': {
-            'ssl': {
-                'ca': os.path.join(BASE_DIR, os.getenv('CPJ_CA')),
-                'cert': os.path.join(BASE_DIR, os.getenv('CPJ_CERT')),
-                'key': os.path.join(BASE_DIR, os.getenv('CPJ_KEY')),
-            }
-        },
+    'ENGINE': 'django.db.backends.mysql',
+    'NAME': os.getenv('CPJ_DATABASE'),
+    'USER': os.getenv('CPJ_USUARIO'),
+    'PASSWORD': os.getenv('CPJ_SENHA'),
+    'HOST': os.getenv('CPJ_HOST'),
+    'PORT': os.getenv('CPJ_PORTA'),
+    'OPTIONS': {
+        'ssl': {
+            'ca': os.path.join(
+                BASE_DIR,
+                os.getenv('CPJ_CA', '')
+            ),
+            'cert': os.path.join(
+                BASE_DIR,
+                os.getenv('CPJ_CERT', '')
+            ),
+            'key': os.path.join(
+                BASE_DIR,
+                os.getenv('CPJ_KEY', '')
+            ),
+        }
     },
+},
+    
 }
 
 DATABASE_ROUTERS = ['config.db_router.CPJRouter']
