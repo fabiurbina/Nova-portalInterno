@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .cpj import consultar_usuarios, consultar_concluidos
+from .cpj import consultar_usuarios, consultar_concluidos,testar_gateway
 
 
 def home(request):
@@ -50,4 +50,12 @@ def guia_condenacao(request):
             'data_fim': data_fim,
             'evento': evento,
         }
+    )
+    
+def teste_gateway(request):
+    resultado = testar_gateway()
+    return render(
+        request,
+        'portal/home.html',
+        {'resultado_gateway': resultado}
     )

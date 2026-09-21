@@ -1,4 +1,22 @@
+import os
+import requests
 from django.db import connections
+
+CPJ_GATEWAY_URL = os.getenv("CPJ_GATEWAY_URL")
+
+
+def consultar_gateway(endpoint, dados=None):
+    resposta = requests.get(
+        f"{CPJ_GATEWAY_URL}/{endpoint}",
+        params=dados,
+        timeout=30
+    )
+
+    resposta.raise_for_status()
+
+    return resposta.json()
+def testar_gateway():
+    return consultar_gateway("teste-cpj")
 
 
 def consultar_usuarios():
