@@ -1,0 +1,63 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        {% block title %}Portal Interno{% endblock %}
+    </title>
+
+    <link rel="stylesheet"
+          href="{% static 'portal/css/style.css' %}">
+</head>
+
+<body>
+
+    <div class="app">
+
+        <aside class="sidebar">
+
+    <div class="menu-title">
+        MENU
+    </div>
+
+    <nav class="menu">
+
+        <a href="/">
+            Início
+        </a>
+
+        <a href="{% url 'relatorios' %}">
+            Relatórios
+        </a>
+
+    </nav>
+
+</aside>
+
+        <div class="main-area">
+
+            <header class="header">
+                Nova Advocacia
+            </header>
+
+            <main class="content">
+
+                {% block content %}
+                {% endblock %}
+
+            </main>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>

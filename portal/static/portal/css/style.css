@@ -1,0 +1,319 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f5f6f8;
+    color: #222;
+}
+
+.app {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* MENU LATERAL */
+
+.sidebar {
+    width: 240px;
+    min-height: 100vh;
+    background: #0D3B66;
+    color: white;
+    padding: 28px 18px;
+}
+
+.menu-title {
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin-bottom: 18px;
+    opacity: 0.8;
+}
+
+.menu {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.menu a {
+    display: block;
+    padding: 12px 14px;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: background 0.2s ease;
+}
+
+.menu a:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+/* ÁREA PRINCIPAL */
+
+.main-area {
+    flex: 1;
+    min-width: 0;
+}
+
+/* CABEÇALHO */
+
+.header {
+    height: 70px;
+    background: white;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    padding: 0 30px;
+    font-weight: bold;
+}
+
+/* CONTEÚDO */
+
+.content {
+    padding: 30px;
+}
+/* =========================================
+   RELATÓRIOS
+========================================= */
+
+.relatorio-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.relatorio-header h2 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.relatorio-header p {
+    margin: 6px 0 0;
+    color: #777;
+    font-size: 14px;
+}
+
+
+/* BOTÃO EXPORTAR */
+
+.btn-exportar {
+    border: none;
+    background: #0D3B66;
+    color: white;
+    padding: 11px 18px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.btn-exportar:hover {
+    background: #092f52;
+}
+
+
+/* CARDS */
+
+.cards-resumo {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-bottom: 25px;
+}
+
+.card-resumo {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.card-resumo span {
+    display: block;
+    color: #777;
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+
+.card-resumo strong {
+    display: block;
+    font-size: 26px;
+    color: #0D3B66;
+}
+
+
+/* FILTROS */
+
+.filtros {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.filtros input,
+.filtros select {
+    height: 40px;
+    border: 1px solid #d9dde3;
+    border-radius: 6px;
+    padding: 0 12px;
+    background: white;
+    font-size: 14px;
+}
+
+.filtros input {
+    width: 320px;
+}
+
+
+/* TABELA */
+
+.tabela-container {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow-x: auto;
+}
+
+#tabelaRelatorio {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+#tabelaRelatorio thead {
+    background: #f7f8fa;
+}
+
+#tabelaRelatorio th {
+    text-align: left;
+    padding: 13px 14px;
+    color: #555;
+    font-weight: 600;
+    border-bottom: 1px solid #ddd;
+    white-space: nowrap;
+}
+
+#tabelaRelatorio td {
+    padding: 12px 14px;
+    border-bottom: 1px solid #eee;
+    white-space: nowrap;
+}
+
+#tabelaRelatorio tbody tr:hover {
+    background: #f8fafc;
+}
+
+
+/* PAGINAÇÃO */
+
+.paginacao {
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;
+    margin-top: 18px;
+}
+
+.paginacao button {
+    border: 1px solid #d9dde3;
+    background: white;
+    padding: 7px 11px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.paginacao button:hover {
+    background: #f1f3f5;
+}
+
+.paginacao button.ativo {
+    background: #0D3B66;
+    color: white;
+    border-color: #0D3B66;
+}
+
+
+/* RESPONSIVO */
+
+@media (max-width: 800px) {
+
+    .cards-resumo {
+        grid-template-columns: 1fr;
+    }
+
+    .relatorio-header {
+        align-items: flex-start;
+        gap: 15px;
+        flex-direction: column;
+    }
+
+    .filtros {
+        flex-direction: column;
+    }
+
+    .filtros input {
+        width: 100%;
+    }
+
+}
+/* CARDS DE RELATÓRIOS */
+
+.relatorio-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 22px;
+    margin-top: 20px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.relatorio-card:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+
+.relatorio-card-conteudo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.relatorio-card h3 {
+    margin: 0 0 7px;
+    font-size: 17px;
+    color: #222;
+}
+
+.relatorio-card p {
+    margin: 0;
+    color: #777;
+    font-size: 13px;
+}
+
+.btn-relatorio {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: #0D3B66;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: background 0.2s ease;
+}
+
+.btn-relatorio:hover {
+    background: #092f52;
+}
+
+.btn-relatorio span {
+    font-size: 17px;
+    line-height: 1;
+}

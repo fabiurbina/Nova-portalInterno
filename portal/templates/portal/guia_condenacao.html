@@ -1,0 +1,181 @@
+{% extends 'portal/base.html' %}
+
+{% block title %}
+Relatório de Conclusões
+{% endblock %}
+
+{% block content %}
+
+<div class="relatorio-header">
+
+    <div>
+        <h2>Relatório de Conclusões</h2>
+
+        <p>
+            Análises de diligência concluídas
+        </p>
+    </div>
+
+    <button class="btn-exportar">
+        Exportar Excel
+    </button>
+
+</div>
+
+
+<!-- CARDS -->
+
+<div class="cards-resumo">
+
+    <div class="card-resumo">
+        <span>Total de registros</span>
+        <strong>{{ total_registros }}</strong>
+    </div>
+
+    <div class="card-resumo">
+        <span>Período</span>
+        <strong>2026</strong>
+    </div>
+
+    <div class="card-resumo">
+        <span>Exibição</span>
+        <strong>25 por página</strong>
+    </div>
+
+</div>
+
+
+<!-- FILTROS -->
+
+<form method="get" class="filtros">
+
+    <div class="filtro">
+        <label for="data_inicio">Data inicial</label>
+
+        <input
+            type="date"
+            id="data_inicio"
+            name="data_inicio"
+            value="{{ data_inicio|default:'' }}"
+            required
+        >
+    </div>
+
+
+    <div class="filtro">
+        <label for="data_fim">Data final</label>
+
+        <input
+            type="date"
+            id="data_fim"
+            name="data_fim"
+            value="{{ data_fim|default:'' }}"
+            required
+        >
+    </div>
+
+
+    <div class="filtro">
+        <label for="evento">Evento</label>
+
+        <input
+            type="text"
+            id="evento"
+            name="evento"
+            value="{{ evento|default:'' }}"
+            placeholder="Ex.: ADIL"
+            required
+        >
+    </div>
+
+
+    <button type="submit" class="btn-consultar">
+        Consultar
+    </button>
+
+</form>
+
+
+<!-- TABELA -->
+
+<div class="tabela-container">
+
+    <table id="tabelaRelatorio">
+
+        <thead>
+
+            <tr>
+
+                <th>Processo</th>
+                <th>Evento</th>
+                <th>Grupo</th>
+                <th>Situação</th>
+                <th>Concluído por</th>
+                <th>Concluído em</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            {% for linha in resultados %}
+
+            <tr>
+
+                <td>{{ linha.0 }}</td>
+
+                <td>{{ linha.1 }}</td>
+
+                <td>{{ linha.2 }}</td>
+
+                <td>{{ linha.3 }}</td>
+
+                <td>{{ linha.4 }}</td>
+
+                <td>{{ linha.5 }}</td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+
+<!-- PAGINAÇÃO -->
+
+<div class="paginacao" id="paginacao"></div>
+
+<script>
+    const filtroGrupo = document.getElementById('filtroGrupo');
+    const tabela = document.getElementById('tabelaRelatorio');
+
+    filtroGrupo.addEventListener('change', function () {
+
+        const grupoSelecionado = this.value;
+        const linhas = tabela.querySelectorAll('tbody tr');
+
+        linhas.forEach(function (linha) {
+
+            const grupo = linha.cells[2].textContent.trim();
+
+            if (
+                grupoSelecionado === '' ||
+                grupo === grupoSelecionado
+            ) {
+                linha.style.display = '';
+            } else {
+                linha.style.display = 'none';
+            }
+
+        });
+
+    });
+</script>
+
+
+{% endblock %}
