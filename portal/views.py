@@ -54,8 +54,4 @@ def guia_condenacao(request):
     
 def teste_gateway(request):
     resultado = testar_gateway()
-    return render(
-        request,
-        'portal/home.html',
-        {'resultado_gateway': resultado}
-    )
+    return JsonResponse(resultado)
