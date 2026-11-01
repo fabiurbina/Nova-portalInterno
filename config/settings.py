@@ -32,7 +32,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
-    'nova-portalinterno-production.up.railway.app',
+    'https://nova-portalinterno-production-5639.up.railway.app/',
 ]
 
 
