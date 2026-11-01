@@ -1,11 +1,28 @@
+# Ambiente virtual
 venv/
+.venv/
+
+# Configurações e senhas
+.env
+.env.*
+!.env.example
+
+# Python
 __pycache__/
 *.pyc
-db.sqlite3
 
-.env
+# Django
+staticfiles/
+media/
+
+# Banco de dados local
+*.sqlite3
+
+# Logs
+*.log
+
+# IDE
+.vscode/
 
 certificados/
-
-.vscode/
-.idea/
+credenciais.txt

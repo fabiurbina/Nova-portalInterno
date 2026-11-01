@@ -2,35 +2,40 @@ import os
 import requests
 from django.db import connections
 
-
-CPJ_GATEWAY_URL = os.getenv("CPJ_GATEWAY_URL")
+CPJ_GATEWAY_URL = os.getenv("CPJ_GATEWAY_URL", "").rstrip("/")
+CPJ_TIMEOUT = (5, 120)
 
 
 def executar_cpj(query, parametros=None):
-
     parametros = parametros or []
 
-    # Railway → Gateway
     if CPJ_GATEWAY_URL:
-
         resposta = requests.post(
             f"{CPJ_GATEWAY_URL}/consulta",
             json={
                 "query": query,
-                "parametros": parametros
+                "parametros": parametros,
             },
-            timeout=60
+            timeout=CPJ_TIMEOUT,
         )
 
-        resposta.raise_for_status()
+        if resposta.status_code == 403:
+            print("ERRO 403 GATEWAY:", resposta.text)
 
+        resposta.raise_for_status()
         dados = resposta.json()
+
+        if dados.get("status") == "erro":
+            raise RuntimeError(
+                dados.get(
+                    "mensagem",
+                    "Erro retornado pelo Gateway CPJ."
+                )
+            )
 
         return dados["colunas"], dados["resultados"]
 
-    # Local → MySQL direto
     with connections["cpj"].cursor() as cursor:
-
         cursor.execute(query, parametros)
 
         colunas = [
@@ -43,70 +48,118 @@ def executar_cpj(query, parametros=None):
     return colunas, resultados
 
 
-def testar_gateway():
-
-    resposta = requests.get(
-        f"{CPJ_GATEWAY_URL}/teste-cpj",
-        timeout=30
+def _resultados_em_dicts(query, parametros=None):
+    colunas, resultados = executar_cpj(
+        query,
+        parametros
     )
 
-    resposta.raise_for_status()
-
-    return resposta.json()
-
-
-def consultar_usuarios():
-
-    query = """
-        SELECT COUNT(*)
-        FROM usuario
-    """
-
-    colunas, resultados = executar_cpj(query)
-
-    return resultados[0][0]
+    return [
+        dict(zip(colunas, linha))
+        for linha in resultados
+    ]
 
 
-def consultar_concluidos(data_inicio, data_fim, evento):
+def consultar_eventos_rpa_hoje():
 
     query = """
         SELECT
-            LTRIM(RTRIM(p.numero_processo)) AS numero_processo,
-            t.evento AS evento,
-            ev.descricao AS nome_evento,
-            gp.descricao AS grupo,
+            COUNT(*) AS qtd,
             s.descricao AS situacao,
-            u.nome AS concluido_por,
-            t.cumprido_em AS concluido_em,
-            t.texto AS texto
+            t.evento AS evento,
+            UPPER(ev.descricao) AS nome_evento,
+            t.cumprido_por AS codigo_robo,
+
+            CASE
+                WHEN t.cumprido_por = 831
+                    THEN 'Robô Protocolo'
+
+                WHEN t.cumprido_por = 846
+                    THEN 'Robô de Guias'
+
+                ELSE 'Não identificado'
+            END AS robo
 
         FROM tramitacao t
 
-        LEFT JOIN cad_processo p
-            ON p.pj = t.id_processo
-
         LEFT JOIN tramitacao_situacao s
-            ON s.id_tramitacao_situacao = t.id_tramitacao_situacao
+            ON s.id_tramitacao_situacao =
+               t.id_tramitacao_situacao
 
-        LEFT JOIN tab_evento ev
+        INNER JOIN tab_evento ev
             ON ev.sigla = t.evento
 
-        LEFT JOIN tab_grupo_trabalho gp
-            ON gp.codigo = p.grupo_trabalho
+        WHERE t.cumprido_por IN (831, 846)
 
-        LEFT JOIN usuario u
-            ON u.id_usuario = t.cumprido_por
+          AND t.cumprido_em >= CURRENT_DATE()
 
-        WHERE t.cumprido_em >= %s
+          AND t.cumprido_em <
+              CURRENT_DATE() + INTERVAL 1 DAY
 
-        AND t.cumprido_em < DATE_ADD(%s, INTERVAL 1 DAY)
+        GROUP BY
+            s.descricao,
+            t.evento,
+            ev.descricao,
+            t.cumprido_por
 
-        AND t.evento = %s
-
-        ORDER BY t.cumprido_em DESC
+        ORDER BY qtd DESC
     """
 
-    return executar_cpj(
-        query,
-        [data_inicio, data_fim, evento]
-    )
+    return _resultados_em_dicts(query)
+
+
+def consultar_ultimo_cumprimento_robos():
+
+    query = """
+        SELECT
+            t.cumprido_por AS codigo_robo,
+
+            CASE
+                WHEN t.cumprido_por = 831 THEN 'Robô Protocolo'
+                WHEN t.cumprido_por = 846 THEN 'Robô de Guias'
+                WHEN t.cumprido_por = 872 THEN 'Robô 872'
+            END AS robo,
+
+            MAX(t.cumprido_em) AS ultimo_cumprido_em
+
+        FROM tramitacao t
+
+        WHERE t.cumprido_por IN (831, 846, 872)
+          AND t.cumprido_em IS NOT NULL
+
+        GROUP BY t.cumprido_por
+    """
+
+    return _resultados_em_dicts(query)
+
+
+def consultar_media_diaria_robos():
+
+    query = """
+        SELECT
+            t.cumprido_por AS codigo_robo,
+
+            ROUND(
+                COUNT(*) /
+                NULLIF(
+                    COUNT(
+                        DISTINCT DATE(t.cumprido_em)
+                    ),
+                    0
+                ),
+                0
+            ) AS media_diaria
+
+        FROM tramitacao t
+
+        WHERE t.cumprido_por IN (831, 846, 872)
+
+          AND t.cumprido_em >=
+              CURRENT_DATE - INTERVAL 30 DAY
+
+          AND t.cumprido_em < CURRENT_DATE
+
+        GROUP BY t.cumprido_por
+    """
+
+    return _resultados_em_dicts(query)

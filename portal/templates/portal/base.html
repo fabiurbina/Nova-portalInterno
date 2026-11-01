@@ -1,63 +1,135 @@
-{% load static %}
 
 <!DOCTYPE html>
+{% load static %}
 <html lang="pt-br">
-
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0b1120">
+    <meta name="description" content="Portal de monitoramento e acompanhamento dos robôs RPA.">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Portal RPA">
 
-    <title>
-        {% block title %}Portal Interno{% endblock %}
-    </title>
+    <title>{% block title %}Monitoramento RPA{% endblock %}</title>
 
-    <link rel="stylesheet"
-          href="{% static 'portal/css/style.css' %}">
+    <link rel="manifest" href="{% static 'portal/manifest.json' %}">
+    <link rel="icon" href="{% static 'portal/icons/icon.svg' %}" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="{% static 'portal/icons/icon.svg' %}">
+    <link rel="stylesheet" href="{% static 'portal/css/style.css' %}">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            min-height: 100%;
+            width: 100%;
+        }
+
+        body {
+            background: #0b1120;
+            color: #e2e8f0;
+            font-family: "Segoe UI", Arial, sans-serif;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        .app {
+            width: 100%;
+            min-height: 100vh;
+            min-height: 100dvh;
+        }
+
+        .main-area {
+            width: 100%;
+            min-width: 0;
+        }
+
+        .header {
+            width: 100%;
+            min-height: 72px;
+            display: flex;
+            align-items: center;
+            padding: 18px 32px;
+            background: #111b2d;
+            border-bottom: 1px solid #26354b;
+            color: #f8fafc;
+            font-size: 19px;
+            font-weight: 800;
+            letter-spacing: .2px;
+        }
+
+        .content {
+            width: 100%;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 30px 32px;
+        }
+
+        button, input, select, textarea {
+            font: inherit;
+        }
+
+        button, a {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        @media (max-width: 600px) {
+            .header {
+                min-height: 60px;
+                padding: 14px 16px;
+                font-size: 17px;
+            }
+
+            .content {
+                padding: 18px 12px;
+            }
+        }
+
+        @media (display-mode: standalone) {
+            body {
+                padding-top: env(safe-area-inset-top);
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+        }
+    </style>
+
+    {% block extra_head %}{% endblock %}
 </head>
 
 <body>
-
     <div class="app">
-
-        <aside class="sidebar">
-
-    <div class="menu-title">
-        MENU
-    </div>
-
-    <nav class="menu">
-
-        <a href="/">
-            Início
-        </a>
-
-        <a href="{% url 'relatorios' %}">
-            Relatórios
-        </a>
-
-    </nav>
-
-</aside>
-
         <div class="main-area">
-
             <header class="header">
-                Nova Advocacia
+                🤖 &nbsp; Monitoramento RPA
             </header>
 
             <main class="content">
-
-                {% block content %}
-                {% endblock %}
-
+                {% block content %}{% endblock %}
             </main>
-
         </div>
-
     </div>
 
-</body>
+    <script>
+        if ("serviceWorker" in navigator) {
+            window.addEventListener("load", function () {
+                navigator.serviceWorker.register(
+                    "{% static 'portal/service-worker.js' %}"
+                ).catch(function (erro) {
+                    console.error(
+                        "Não foi possível registrar o aplicativo:",
+                        erro
+                    );
+                });
+            });
+        }
+    </script>
 
+    {% block extra_scripts %}{% endblock %}
+</body>
 </html>

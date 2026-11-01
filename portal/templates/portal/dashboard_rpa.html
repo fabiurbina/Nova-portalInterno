@@ -1,0 +1,776 @@
+
+{% extends "portal/base.html" %}
+
+{% block content %}
+<style>
+    .rpa-dashboard {
+        color: #e8eef8;
+        padding: 10px 0 30px;
+    }
+
+    .rpa-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 28px;
+        flex-wrap: wrap;
+    }
+
+    .rpa-header h1 {
+        font-size: clamp(24px, 4vw, 34px);
+        font-weight: 800;
+        margin: 0 0 8px;
+        color: #fff;
+    }
+
+    .rpa-header p {
+        margin: 0;
+        color: #94a3b8;
+    }
+
+    .rpa-date {
+        background: #17243a;
+        border: 1px solid #2b3b54;
+        border-radius: 12px;
+        padding: 12px 16px;
+        color: #cbd5e1;
+        font-size: 13px;
+    }
+
+    .rpa-kpis {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+        margin-bottom: 30px;
+    }
+
+    .rpa-kpi {
+        background: linear-gradient(135deg, #17243a, #111b2d);
+        border: 1px solid #2b3b54;
+        border-radius: 18px;
+        padding: 22px;
+        min-width: 0;
+    }
+
+    .rpa-kpi-label {
+        color: #94a3b8;
+        font-size: 13px;
+        margin-bottom: 12px;
+    }
+
+    .rpa-kpi-value {
+        color: #fff;
+        font-size: clamp(28px, 4vw, 38px);
+        font-weight: 800;
+        line-height: 1.1;
+    }
+
+    .rpa-section-title {
+        font-size: 20px;
+        font-weight: 750;
+        color: #fff;
+        margin: 0 0 16px;
+    }
+
+    .rpa-list {
+        display: grid;
+        gap: 14px;
+    }
+
+    .rpa-card {
+        background: #111b2d;
+        border: 1px solid #293950;
+        border-radius: 16px;
+        overflow: hidden;
+        transition: border-color .2s;
+    }
+
+    .rpa-card:hover,
+    .rpa-card[open] {
+        border-color: #3b82f6;
+    }
+
+    .rpa-card summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 20px;
+        cursor: pointer;
+        list-style: none;
+    }
+
+    .rpa-card summary::-webkit-details-marker {
+        display: none;
+    }
+
+    .rpa-card summary::marker {
+        content: "";
+    }
+
+    .rpa-robot-info {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        min-width: 0;
+    }
+
+    .rpa-robot-icon {
+        display: grid;
+        place-items: center;
+        flex-shrink: 0;
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        background: #1d3557;
+        font-size: 23px;
+    }
+
+    .rpa-robot-name {
+        font-size: 16px;
+        font-weight: 750;
+        color: #fff;
+        margin-bottom: 7px;
+    }
+
+    .rpa-robot-subtitle {
+        font-size: 12px;
+        color: #94a3b8;
+        line-height: 1.6;
+    }
+
+    .rpa-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        font-weight: 750;
+        margin-bottom: 5px;
+    }
+
+    .rpa-status.ativo {
+        color: #4ade80;
+    }
+
+    .rpa-status.inativo {
+        color: #f87171;
+    }
+
+    .rpa-status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .rpa-robot-stats {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-shrink: 0;
+    }
+
+    .rpa-stat {
+        text-align: right;
+    }
+
+    .rpa-stat strong {
+        display: block;
+        color: #fff;
+        font-size: 21px;
+    }
+
+    .rpa-stat span {
+        display: block;
+        color: #94a3b8;
+        font-size: 11px;
+        margin-top: 3px;
+    }
+
+    .rpa-chevron {
+        color: #60a5fa;
+        font-size: 20px;
+        transition: transform .2s;
+    }
+
+    .rpa-card[open] .rpa-chevron {
+        transform: rotate(180deg);
+    }
+
+    .rpa-events {
+        border-top: 1px solid #293950;
+        padding: 8px 20px 18px;
+    }
+
+    .rpa-event {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        padding: 15px 0;
+        border-bottom: 1px solid #253247;
+    }
+
+    .rpa-event:last-child {
+        border-bottom: none;
+    }
+
+    .rpa-event-name {
+        color: #e2e8f0;
+        font-weight: 600;
+        font-size: 14px;
+        overflow-wrap: anywhere;
+    }
+
+    .rpa-event-detail {
+        color: #94a3b8;
+        font-size: 12px;
+        margin-top: 5px;
+    }
+
+    .rpa-event-count {
+        background: #1e3a5f;
+        color: #93c5fd;
+        font-weight: 800;
+        border-radius: 10px;
+        min-width: 48px;
+        padding: 9px 12px;
+        text-align: center;
+        flex-shrink: 0;
+    }
+
+    .rpa-empty {
+        padding: 28px 20px;
+        text-align: center;
+        color: #94a3b8;
+        background: #111b2d;
+        border: 1px solid #293950;
+        border-radius: 16px;
+    }
+
+
+    /* Métrica de produtividade diária */
+    .rpa-productivity {
+        width: 100%;
+        max-width: 440px;
+        margin-top: 12px;
+    }
+
+    .rpa-productivity-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 8px;
+    }
+
+    .rpa-productivity-title {
+        color: #b8c7dc;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .rpa-productivity-value {
+        color: #f8fafc;
+        font-size: 13px;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .rpa-progress-track {
+        width: 100%;
+        height: 9px;
+        overflow: hidden;
+        border-radius: 20px;
+        background: #27364c;
+        border: 1px solid #34445b;
+    }
+
+    .rpa-progress-fill {
+        height: 100%;
+        border-radius: 20px;
+        background: linear-gradient(90deg, #f59e0b, #facc15);
+        transition: width .5s ease;
+    }
+
+    .rpa-progress-fill.is-complete {
+        background: linear-gradient(90deg, #059669, #34d399);
+    }
+
+    .rpa-productivity-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 7px;
+        color: #93a7c1;
+        font-size: 11px;
+    }
+
+    .rpa-meta-complete {
+        color: #34d399;
+        font-weight: 700;
+    }
+
+    .robot-last-activity {
+        margin-top: 5px;
+        color: #94a3b8;
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
+    .rpa-refresh-controls {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 14px;
+    }
+
+    .rpa-refresh-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        border: 1px solid #3b82f6;
+        border-radius: 10px;
+        padding: 10px 14px;
+        background: #2563eb;
+        color: #fff;
+        font: inherit;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background .2s, opacity .2s;
+    }
+
+    .rpa-refresh-button:hover {
+        background: #1d4ed8;
+    }
+
+    .rpa-refresh-button:disabled {
+        cursor: wait;
+        opacity: .7;
+    }
+
+    .rpa-refresh-icon {
+        display: inline-block;
+        font-size: 18px;
+        line-height: 1;
+    }
+
+    .rpa-refresh-button.is-loading .rpa-refresh-icon {
+        animation: rpa-spin 1s linear infinite;
+    }
+
+    @keyframes rpa-spin {
+        to { transform: rotate(360deg); }
+    }
+
+    .rpa-refresh-info {
+        color: #94a3b8;
+        font-size: 12px;
+        text-align: right;
+    }
+
+    .rpa-refresh-status {
+        display: block;
+        margin-top: 4px;
+        color: #93c5fd;
+    }
+
+    .rpa-refresh-status.is-error {
+        color: #fca5a5;
+    }
+
+    @media (max-width: 700px) {
+        .rpa-kpis {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .rpa-kpi {
+            padding: 16px;
+            border-radius: 14px;
+        }
+
+        .rpa-kpi:last-child {
+            grid-column: 1 / -1;
+        }
+
+        .rpa-header {
+            align-items: flex-start;
+        }
+
+        .rpa-date {
+            width: 100%;
+        }
+
+        .rpa-card summary {
+            padding: 15px;
+            gap: 10px;
+        }
+
+        .rpa-robot-info {
+            gap: 10px;
+        }
+
+        .rpa-robot-icon {
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+        }
+
+        .rpa-robot-name {
+            font-size: 14px;
+        }
+
+        .rpa-robot-stats {
+            gap: 10px;
+        }
+
+        .rpa-stat strong {
+            font-size: 17px;
+        }
+
+        .rpa-stat span {
+            font-size: 10px;
+        }
+
+        .rpa-chevron {
+            display: none;
+        }
+
+        .rpa-events {
+            padding: 5px 15px 12px;
+        }
+
+        .rpa-event {
+            align-items: flex-start;
+        }
+    }
+
+    @media (max-width: 400px) {
+        .rpa-robot-stats {
+            gap: 8px;
+        }
+
+        .rpa-stat span {
+            max-width: 48px;
+        }
+
+        .rpa-robot-subtitle {
+            overflow-wrap: anywhere;
+        }
+    }
+</style>
+
+<div class="rpa-dashboard">
+
+    <header class="rpa-header">
+        <div>
+            <h1>Monitoramento RPA</h1>
+            <p>Acompanhe a atividade e o histórico dos robôs.</p>
+        </div>
+
+        <div>
+            <div class="rpa-date">
+                <strong>Hoje:</strong> {% now "d/m/Y" %}
+            </div>
+
+            <div class="rpa-refresh-controls">
+                <button
+                    type="button"
+                    id="btn-atualizar-rpa"
+                    class="rpa-refresh-button"
+                    {% if sincronizando %}disabled{% endif %}
+                >
+                    <span class="rpa-refresh-icon" id="icone-atualizar-rpa">↻</span>
+                    <span id="texto-atualizar-rpa">
+                        {% if sincronizando %}Atualizando...{% else %}Atualizar dados{% endif %}
+                    </span>
+                </button>
+
+                <div class="rpa-refresh-info">
+                    <div>
+                        Última atualização:
+                        <strong id="ultima-atualizacao-rpa">
+                            {% if ultima_atualizacao %}
+                                {{ ultima_atualizacao|date:"d/m/Y H:i:s" }}
+                            {% else %}
+                                Ainda não sincronizado
+                            {% endif %}
+                        </strong>
+                    </div>
+                    <span
+                        id="status-atualizacao-rpa"
+                        class="rpa-refresh-status"
+                        aria-live="polite"
+                    >{% if sincronizando %}Sincronizando com o CPJ...{% elif ultimo_erro %}A última sincronização falhou.{% endif %}</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="rpa-kpis">
+        <div class="rpa-kpi">
+            <div class="rpa-kpi-label">Eventos processados hoje</div>
+            <div class="rpa-kpi-value">{{ total_eventos }}</div>
+        </div>
+
+        <div class="rpa-kpi">
+            <div class="rpa-kpi-label">Robôs monitorados</div>
+            <div class="rpa-kpi-value">{{ total_robos }}</div>
+        </div>
+
+        <div class="rpa-kpi">
+            <div class="rpa-kpi-label">Robôs ativos nos últimos 20 minutos</div>
+            <div class="rpa-kpi-value">{{ robos_ativos }}</div>
+        </div>
+    </section>
+
+    <h2 class="rpa-section-title">Robôs em monitoramento</h2>
+
+    <section class="rpa-list">
+        {% for codigo_robo, dados in robos.items %}
+            <details class="rpa-card">
+                <summary>
+                    <div class="rpa-robot-info">
+                        <div class="rpa-robot-icon">🤖</div>
+
+                        <div>
+                            <div class="rpa-robot-name">
+                                {{ dados.nome }}
+                            </div>
+
+                            <div class="rpa-status {% if dados.ativo %}ativo{% else %}inativo{% endif %}">
+                                <span class="rpa-status-dot"></span>
+                                {{ dados.status }}
+                            </div>
+
+                            <div class="robot-last-activity">
+                                Última execução:
+                                <strong>{{ dados.ultima_execucao_formatada }}</strong>
+                            </div>
+
+                            <div class="rpa-productivity">
+                                <div class="rpa-productivity-header">
+                                    <span class="rpa-productivity-title">Produtividade diária</span>
+                                    <span class="rpa-productivity-value">
+                                        {{ dados.total }} / {{ dados.meta_diaria }}
+                                    </span>
+                                </div>
+
+                                <div class="rpa-progress-track">
+                                    <div
+                                        class="rpa-progress-fill {% if dados.percentual_meta >= 100 %}is-complete{% endif %}"
+                                        style="width: {% if dados.percentual_meta > 100 %}100{% else %}{{ dados.percentual_meta }}{% endif %}%;">
+                                    </div>
+                                </div>
+
+                                <div class="rpa-productivity-footer">
+                                    <span>{{ dados.percentual_meta }}% da meta</span>
+                                    {% if dados.meta_diaria == 0 %}
+                                        <span>Sem meta histórica</span>
+                                    {% elif dados.faltam_meta > 0 %}
+                                        <span>Faltam {{ dados.faltam_meta }} eventos</span>
+                                    {% else %}
+                                        <span class="rpa-meta-complete">Meta atingida!</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="rpa-robot-stats">
+                        <div class="rpa-stat">
+                            <strong>{{ dados.total }}</strong>
+                            <span>Eventos hoje</span>
+                        </div>
+
+                        <div class="rpa-stat">
+                            <strong>{{ dados.grupos }}</strong>
+                            <span>Tipos</span>
+                        </div>
+
+                        <span class="rpa-chevron">⌄</span>
+                    </div>
+                </summary>
+
+                <div class="rpa-events">
+                    {% for item in dados.eventos %}
+                        <div class="rpa-event">
+                            <div>
+                                <div class="rpa-event-name">
+                                    {{ item.nome_evento|default:"Evento sem descrição" }}
+                                </div>
+
+                                <div class="rpa-event-detail">
+                                    Código: {{ item.evento }}
+                                    · Situação: {{ item.situacao|default:"Não informada" }}
+                                </div>
+                            </div>
+
+                            <div class="rpa-event-count">
+                                {{ item.qtd }}
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p class="rpa-robot-subtitle">
+                            Nenhum evento encontrado hoje para este robô.
+                        </p>
+                    {% endfor %}
+                </div>
+            </details>
+        {% empty %}
+            <div class="rpa-empty">
+                <div style="font-size: 30px; margin-bottom: 10px;">📭</div>
+                <strong>Nenhum robô encontrado.</strong>
+                <p>Verifique os registros de atividade no CPJ.</p>
+            </div>
+        {% endfor %}
+    </section>
+
+</div>
+
+{% csrf_token %}
+<script>
+(function () {
+    const botao = document.getElementById("btn-atualizar-rpa");
+    const textoBotao = document.getElementById("texto-atualizar-rpa");
+    const status = document.getElementById("status-atualizacao-rpa");
+    const ultimaAtualizacao = document.getElementById("ultima-atualizacao-rpa");
+
+    if (!botao) return;
+
+    let solicitacaoManual = false;
+    let estadoAnteriorSincronizando = botao.disabled;
+    let recarregamentoAgendado = false;
+
+    function obterCsrfToken() {
+        const campo = document.querySelector("input[name='csrfmiddlewaretoken']");
+        if (campo) return campo.value;
+
+        const cookie = document.cookie
+            .split(";")
+            .map(item => item.trim())
+            .find(item => item.startsWith("csrftoken="));
+
+        return cookie ? decodeURIComponent(cookie.substring("csrftoken=".length)) : "";
+    }
+
+    function definirStatus(mensagem, erro) {
+        status.textContent = mensagem || "";
+        status.classList.toggle("is-error", Boolean(erro));
+    }
+
+    function mostrarSincronizando() {
+        botao.disabled = true;
+        botao.classList.add("is-loading");
+        textoBotao.textContent = "Atualizando...";
+        definirStatus("Sincronizando com o CPJ. Você pode continuar usando a página.", false);
+    }
+
+    function mostrarPronto() {
+        botao.disabled = false;
+        botao.classList.remove("is-loading");
+        textoBotao.textContent = "Atualizar dados";
+    }
+
+    async function consultarStatus() {
+        try {
+            const resposta = await fetch("{% url 'status_dashboard_rpa' %}", {
+                method: "GET",
+                credentials: "same-origin",
+                headers: { "X-Requested-With": "XMLHttpRequest" }
+            });
+
+            if (!resposta.ok) return;
+
+            const dados = await resposta.json();
+
+            if (dados.ultima_atualizacao) {
+                ultimaAtualizacao.textContent = dados.ultima_atualizacao;
+            }
+
+            if (dados.sincronizando) {
+                mostrarSincronizando();
+            } else {
+                mostrarPronto();
+
+                if (dados.ultimo_erro) {
+                    definirStatus("Falha na sincronização. Verifique os logs do servidor.", true);
+                } else if (estadoAnteriorSincronizando) {
+                    definirStatus("Dados atualizados.", false);
+                } else if (!solicitacaoManual) {
+                    definirStatus("", false);
+                }
+            }
+
+            if (
+                estadoAnteriorSincronizando &&
+                !dados.sincronizando &&
+                !dados.ultimo_erro &&
+                !recarregamentoAgendado
+            ) {
+                recarregamentoAgendado = true;
+                window.location.reload();
+                return;
+            }
+
+            estadoAnteriorSincronizando = Boolean(dados.sincronizando);
+
+            if (!dados.sincronizando && solicitacaoManual) {
+                solicitacaoManual = false;
+                if (!dados.ultimo_erro) {
+                    window.location.reload();
+                }
+            }
+        } catch (erro) {
+            console.error("Erro ao consultar status do dashboard RPA:", erro);
+        }
+    }
+
+    botao.addEventListener("click", async function () {
+        if (botao.disabled) return;
+
+        solicitacaoManual = true;
+        mostrarSincronizando();
+
+        try {
+            const resposta = await fetch("{% url 'atualizar_dashboard_rpa' %}", {
+                method: "POST",
+                credentials: "same-origin",
+                headers: {
+                    "X-CSRFToken": obterCsrfToken(),
+                    "X-Requested-With": "XMLHttpRequest",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({})
+            });
+
+            const dados = await resposta.json();
+
+            if (!resposta.ok || !dados.ok) {
+                throw new Error(dados.mensagem || "Não foi possível iniciar a atualização.");
+            }
+
+            definirStatus(dados.mensagem || "Atualização iniciada.", false);
+            estadoAnteriorSincronizando = true;
+            await consultarStatus();
+        } catch (erro) {
+            solicitacaoManual = false;
+            mostrarPronto();
+            definirStatus(erro.message || "Erro ao solicitar atualização.", true);
+        }
+    });
+
+    // Verifica o andamento sem executar novas consultas pesadas ao CPJ.
+    consultarStatus();
+    window.setInterval(consultarStatus, 15000);
+})();
+</script>
+{% endblock %}

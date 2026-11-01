@@ -1,0 +1,234 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="dark">
+    <title>Login | RPA Monitor</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            color: #f8fafc;
+            background:
+                radial-gradient(circle at top, #172554 0, transparent 45%),
+                #0b1120;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 410px;
+        }
+
+        .brand {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .brand-icon {
+            display: inline-flex;
+            width: 66px;
+            height: 66px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 20px;
+            background: #172554;
+            border: 1px solid #294578;
+            color: #60a5fa;
+            font-size: 30px;
+            margin-bottom: 14px;
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            font-size: 29px;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .login-card {
+            padding: 28px;
+            border: 1px solid #263449;
+            border-radius: 18px;
+            background: rgba(17, 24, 39, 0.96);
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.3);
+        }
+
+        .login-card h2 {
+            margin: 0 0 8px;
+            font-size: 21px;
+        }
+
+        .intro {
+            color: #94a3b8;
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            margin: 17px 0 8px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #374151;
+            border-radius: 9px;
+            outline: none;
+            background: #0b1120;
+            color: #f8fafc;
+            font-size: 16px;
+        }
+
+        input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+
+        button {
+            width: 100%;
+            margin-top: 24px;
+            padding: 14px;
+            border: 0;
+            border-radius: 9px;
+            background: #2563eb;
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .error {
+            padding: 12px;
+            margin: 14px 0;
+            border-radius: 8px;
+            background: #451a1a;
+            color: #fecaca;
+            font-size: 13px;
+        }
+
+        .footer {
+            margin-top: 24px;
+            text-align: center;
+            color: #64748b;
+            font-size: 11px;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 23px 20px;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
+                }.creator {
+            margin-top: 10px;
+            font-size: 12px;
+            letter-spacing: 0;
+            color: #94a3b8;
+        }
+
+        .creator strong {
+            color: #60a5fa;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="login-container">
+        <header class="brand">
+            <div class="brand-icon" aria-hidden="true">⌘</div>
+            <h1>RPA Monitor</h1>
+            <div class="subtitle">
+                Central de Monitoramento de Automações
+            </div>
+        </header>
+
+        <section class="login-card">
+            <h2>Bem-vindo de volta</h2>
+            <p class="intro">
+                Entre com suas credenciais para continuar.
+            </p>
+
+            {% if form.errors %}
+                <div class="error" role="alert">
+                    Usuário ou senha inválidos. Verifique seus dados.
+                </div>
+            {% endif %}
+
+            {% if next %}
+                {% if user.is_authenticated %}
+                    <div class="error" role="alert">
+                        Sua conta não tem permissão para acessar essa página.
+                    </div>
+                {% endif %}
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+
+                <input
+                    type="hidden"
+                    name="next"
+                    value="{{ next|default:'' }}"
+                >
+
+                <label for="id_username">Usuário</label>
+                <input
+                    type="text"
+                    name="username"
+                    id="id_username"
+                    autocomplete="username"
+                    placeholder="Digite seu usuário"
+                    required
+                    autofocus
+                >
+
+                <label for="id_password">Senha</label>
+                <input
+                    type="password"
+                    name="password"
+                    id="id_password"
+                    autocomplete="current-password"
+                    placeholder="Digite sua senha"
+                    required
+                >
+
+                <button type="submit">Entrar no sistema</button>
+            </form>
+        </section>
+
+        <footer class="footer">
+            RPA MONITOR · ACESSO RESTRITO
+            <div class="creator">
+        Criado por <strong>Fabio Soares</strong>
+    </div>
+        </footer>
+    </main>
+</body>
+</html>
