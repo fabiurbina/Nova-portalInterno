@@ -27,7 +27,7 @@ load_dotenv(BASE_DIR / '.env')
 SECRET_KEY = 'django-insecure-b!m(q=16(a$o^_7rt#oa0@)ki22nu$v(8ow+43pv@@r#s8!@b8'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     "localhost",
@@ -35,6 +35,9 @@ ALLOWED_HOSTS = [
     "nova-portalinterno-production-5639.up.railway.app",
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://nova-portalinterno-production-5639.up.railway.app",
+]
 
 # Application definition
 
