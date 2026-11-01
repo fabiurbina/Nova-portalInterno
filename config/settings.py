@@ -30,9 +30,9 @@ SECRET_KEY = 'django-insecure-b!m(q=16(a$o^_7rt#oa0@)ki22nu$v(8ow+43pv@@r#s8!@b8
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-    'https://nova-portalinterno-production-5639.up.railway.app/',
+    "localhost",
+    "127.0.0.1",
+    "nova-portalinterno-production-5639.up.railway.app",
 ]
 
 
