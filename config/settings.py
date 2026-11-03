@@ -33,10 +33,12 @@ ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
     "nova-portalinterno-production-5639.up.railway.app",
+    "monitoramentorobos.nova.log.br"
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "https://nova-portalinterno-production-5639.up.railway.app",
+    "https://monitoramentorobos.nova.log.br"
 ]
 
 # Application definition
