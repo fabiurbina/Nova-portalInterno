@@ -116,18 +116,23 @@
     </div>
 
     <script>
+        
         if ("serviceWorker" in navigator) {
             window.addEventListener("load", function () {
                 navigator.serviceWorker.register(
-                    "{% static 'portal/service-worker.js' %}"
+                    "{% static 'portal/service-worker.js' %}",
+                    {
+                        scope: "/"
+                    }
                 ).catch(function (erro) {
                     console.error(
-                        "Não foi possível registrar o aplicativo:",
+                        "Erro ao registrar Service Worker:",
                         erro
                     );
                 });
             });
         }
+
     </script>
 
     {% block extra_scripts %}{% endblock %}

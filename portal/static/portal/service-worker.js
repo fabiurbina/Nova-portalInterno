@@ -1,27 +1,44 @@
 
-const CACHE_NAME = "portal-rpa-v1";
+const CACHE_NAME = "portal-rpa-v2";
 
-// Instala o Service Worker sem armazenar páginas ou dados privados.
+// Instala o Service Worker.
 self.addEventListener("install", (event) => {
-    self.skipWaiting();
-});
-
-// Ativa a versão atual do Service Worker.
-self.addEventListener("activate", (event) => {
     event.waitUntil(
         (async () => {
-            const cachesExistentes = await caches.keys();
-
-            await Promise.all(
-                cachesExistentes
-                    .filter((nome) => nome.startsWith("portal-rpa-") && nome !== CACHE_NAME)
-                    .map((nome) => caches.delete(nome))
-            );
-
-            await self.clients.claim();
+            await self.skipWaiting();
         })()
     );
 });
 
-// Não intercepta requisições: o Django continua responsável
-// pelo login, pelas permissões e pelos dados do dashboard.
+// Ativa a versão atual e limpa caches antigos.
+self.addEventListener("activate", (event) => {
+    event.waitUntil(
+        (async () => {
+            try {
+                const cachesExistentes = await caches.keys();
+
+                await Promise.all(
+                    cachesExistentes
+                        .filter(
+                            (nome) =>
+                                nome.startsWith("portal-rpa-") &&
+                                nome !== CACHE_NAME
+                        )
+                        .map((nome) => caches.delete(nome))
+                );
+
+                await self.clients.claim();
+
+            } catch (erro) {
+                console.error(
+                    "Erro ao ativar Service Worker:",
+                    erro
+                );
+            }
+        })()
+    );
+});
+
+// Não intercepta requisições.
+// O Django continua responsável pelo login,
+// permissões e informações do dashboard.
