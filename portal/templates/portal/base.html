@@ -120,10 +120,7 @@
         if ("serviceWorker" in navigator) {
             window.addEventListener("load", function () {
                 navigator.serviceWorker.register(
-                    "{% static 'portal/service-worker.js' %}",
-                    {
-                        scope: "/"
-                    }
+                    "{% static 'portal/service-worker.js' %}"
                 ).catch(function (erro) {
                     console.error(
                         "Erro ao registrar Service Worker:",
