@@ -4,7 +4,7 @@
   "short_name": "Portal RPA",
   "description": "Monitoramento de execução e produtividade dos robôs RPA.",
   "lang": "pt-BR",
-  "start_url": "/",
+  "start_url": "/login/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
